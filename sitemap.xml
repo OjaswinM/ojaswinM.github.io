@@ -3,39 +3,39 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://example.org/post/third/</loc>
+    <loc>http://ojaswinm.github.io/post/third/</loc>
     <lastmod>2019-07-12T22:51:01+05:30</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/</loc>
-    <lastmod>2019-07-12T22:51:01+05:30</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.org/post/</loc>
+    <loc>http://ojaswinm.github.io/</loc>
     <lastmod>2019-07-12T22:51:01+05:30</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/post/second/</loc>
+    <loc>http://ojaswinm.github.io/post/</loc>
+    <lastmod>2019-07-12T22:51:01+05:30</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://ojaswinm.github.io/post/second/</loc>
     <lastmod>2019-07-12T21:17:47+05:30</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/post/first/</loc>
+    <loc>http://ojaswinm.github.io/post/first/</loc>
     <lastmod>2019-07-12T20:47:28+05:30</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/categories/</loc>
+    <loc>http://ojaswinm.github.io/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/tags/</loc>
+    <loc>http://ojaswinm.github.io/tags/</loc>
     <priority>0</priority>
   </url>
   
