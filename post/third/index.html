@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.55.6" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/index.xml" type="application/rss+xml" title="Ojaswin">
+<title>#3: Implementing a whole microservice from ground up - Ojaswin</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    
+    <a class="path" href="http://example.org/">Home</a>
+    <a class="path" href="http://example.org//about">About</a>
+    <span class="caret"></span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2019-07-12">July 12, 2019</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">#3: Implementing a whole microservice from ground up</h1>
+  <section class="body" itemprop="articleBody">
+    <p>This was my final project for Taskcluster before I got busy with school work. Coincidentally,
+it was also my biggest contribution yet involving more than 1500 modified lines, 4 PRs
+and 100s of comments worth discussion and constructive criticism. This whole project
+took me well around a month to implement and the folks over at Taskcluster were nice
+enough to guide me throughout.</p>
+
+<p>As mentioned in my previous posts, Taskcluster is used for continuous integration and
+task execution. It has a notification service that notifies clients whenever
+their submitted task is completed. This service used to have a denylist feature to simply
+blacklist certain addresses from recieving notifications based on their past behaviour.
+The issue was that this denylist feature had no UI whatsoever and was only implemented
+as a config file.</p>
+
+<p>This project involved implementing the UI for the notification denylist. Since it was only present
+in the form of a config file, there was no database of the denylisted addresses as well
+as no API endpoints to add, delete or query the denylist. Further, the notification service
+simply read the denylisted addresses from the config file and there was no support to
+do so through a DB.</p>
+
+<p>Although this time the changes were isolated to the notification service, I had to
+implement everything from scratch. Some of the tasks involved were:-</p>
+
+<ul>
+<li><p><strong>Creating a DB</strong></p>
+
+<p>The blacklisted addresses needed to be stored in a DB in order to be used in
+a consistent manner. AzureDB was used to achieve this and consequently, I learned a great
+deal about NoSQL datastores which I had no prior experience working with.</p></li>
+
+<li><p><strong>Hooking up the DB</strong></p>
+
+<p>Next Up, I had to link the DB instance with the notification service. Taskcluster
+uses a very sophisticated system for setting up services and injecting dependencies.
+It&rsquo;s done using their own library, <a href="https://github.com/taskcluster/taskcluster/tree/master/libraries/api">taskcluster-api</a>,
+and it took me significant effort and some guidance to get the whole process down.</p></li>
+
+<li><p><strong>Adding CRUD endpoints to the DB</strong></p>
+
+<p>Once the DB was set up and working, I had to add creation, updation and deletion
+endpoints that would be called by the GraphQL server in order to access and modify the
+denylist database.</p></li>
+
+<li><p><strong>Modifying existing API endpoints</strong></p>
+
+<p>The existing notification API had to be modified to restrict sending notifications
+to addresses in the database. The addresses that were initially passed in the config file
+had to now be added to the denylist database.</p></li>
+
+<li><p><strong>Writing tests</strong></p>
+
+<p>Again, several new unit tests had to be written to ensure proper working of the new
+API endpoints as well as the modified ones.</p></li>
+
+<li><p><strong>Modifying the graphQL server</strong></p>
+
+<p>Taskcluster&rsquo;s <code>web-server</code> is based on GraphQL rather than REST. As I had no experience
+with GraphQL, I had to learn it from scratch and write new data types as well as
+GraphQL reslovers to accomodate the new API endpoints.</p></li>
+
+<li><p><strong>Finally, implementing the UI</strong></p>
+
+<p>This was the final task of the project. A whole UI had to be implemented for the
+denylist. Since the notification service had no UI till now, the whole thing had
+to be implemented from scratch. This also involved writing new GraphQL queries to
+query the backend to edit the denylist.</p></li>
+</ul>
+
+<p>So with that I was finally able to understand and implement a good chunk of a whole
+microservice in taskcluster.</p>
+
+<p>When I intitially started out fixing small typos, I had no
+idea I would get a chance to work on so many interesting projects and learn such a great
+deal about software development in general. To top it off, my contributions didn&rsquo;t go unnoticed
+and I was officially made a collaborator of Taskcluster and granted push rights
+to the repository. I also had my picture and name added to the project front page
+on github which in itself is a great achievement for me.</p>
+
+<p>I am linking to the relevant PRs and forums below. All the discussion and code
+related to this project can be found in these links:-</p>
+
+<ul>
+<li><p>Bugzilla post
+<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1520918">https://bugzilla.mozilla.org/show_bug.cgi?id=1520918</a></p></li>
+
+<li><p>Creating azure table, API endpoints and tests
+<a href="https://github.com/taskcluster/taskcluster/pull/127/commits">https://github.com/taskcluster/taskcluster/pull/127/commits</a></p></li>
+
+<li><p>Adding support to the GraphQL server
+<a href="https://github.com/taskcluster/taskcluster/pull/270">https://github.com/taskcluster/taskcluster/pull/270</a></p></li>
+
+<li><p>Finally, adding UI for the denylist
+<a href="https://github.com/taskcluster/taskcluster/pull/311">https://github.com/taskcluster/taskcluster/pull/311</a></p></li>
+</ul>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2019 Ojaswin - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+

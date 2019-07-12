@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.55.6" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/index.xml" type="application/rss+xml" title="Ojaswin">
+<title>#2: First Big Contribution: The Taskcluster Queue - Ojaswin</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    
+    <a class="path" href="http://example.org/">Home</a>
+    <a class="path" href="http://example.org//about">About</a>
+    <span class="caret"></span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2019-07-12">July 12, 2019</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">#2: First Big Contribution: The Taskcluster Queue</h1>
+  <section class="body" itemprop="articleBody">
+    <p>After I had a few of my PRs merged and was feeling confident about the codebase, I moved on
+to a bigger project.</p>
+
+<p>The Taskcluster platform is built on the microservices model. The backbone
+of the whole platform is the <code>taskcluster-queue</code> which is implemented using RabbitMQ
+that uses <em>Advanced Message Queueing Protocol(AMQP)</em> at its core. Whenever a task needs to
+be performed its specification is published onto the queue where workers pick up the
+relevant tasks. The format in which messages are published are fixed beforehand and must
+be adhered to by all the participating clients and microservices.</p>
+
+<p>This project involved <strong>increasing the length of certain fields of the message format</strong> as well as <strong>implementing
+unit tests using MochaJS</strong> for the required changes. As the queue and messaging is integral to the whole system, identifying
+all the services using the messages and making required changes in the schema was a challenging task. With the guidance
+of the Taskcluster team I was able to zero out all the places affected by this change and make neccessary schema adjustments. After
+the changes were made, I wrote several new unit tests to ensure all the changes were covered.</p>
+
+<p>This was my first big project which involved modifying the core of the system. Infact, this change in itself
+was critical enough that the Taskcluster team decided to take it through their internal
+RFC (Request for Comments) process (which is somewhat similar to the IETF RFC process). Being trusted to
+work on such a core part of the system was an amazing experience and it truly gave me
+an insight on how vast such applications really are.</p>
+
+<p>I&rsquo;m attaching the relevant links below:-</p>
+
+<ul>
+<li><p><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1520579">Original Bugzilla Post</a></p>
+
+<p>Bugzilla is Mozillas internal forum to discuss and post new bugs/projects.</p></li>
+
+<li><p><a href="https://github.com/taskcluster/taskcluster/pull/110">Pull Request</a></p>
+
+<p>The PR I submitted for the project. Almost 500 lines were modified with changes
+spread throughout the whole system.</p></li>
+
+<li><p><a href="https://github.com/taskcluster/taskcluster-rfcs/pull/139">RFC related to the project</a></p>
+
+<p>RFCs are usually created for changes that are critical enough to warrant an approval by all
+the Taskcluster maintainers.</p></li>
+</ul>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2019 Ojaswin - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+
