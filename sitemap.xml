@@ -3,20 +3,25 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://ojaswinm.github.io/post/third/</loc>
-    <lastmod>2019-07-12T22:51:01+05:30</lastmod>
+    <loc>http://ojaswinm.github.io/post/fourth/</loc>
+    <lastmod>2019-07-13T12:56:40+05:30</lastmod>
   </url>
   
   <url>
     <loc>http://ojaswinm.github.io/</loc>
-    <lastmod>2019-07-12T22:51:01+05:30</lastmod>
+    <lastmod>2019-07-13T12:56:40+05:30</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://ojaswinm.github.io/post/</loc>
-    <lastmod>2019-07-12T22:51:01+05:30</lastmod>
+    <lastmod>2019-07-13T12:56:40+05:30</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://ojaswinm.github.io/post/third/</loc>
+    <lastmod>2019-07-12T22:51:01+05:30</lastmod>
   </url>
   
   <url>
@@ -27,6 +32,11 @@
   <url>
     <loc>http://ojaswinm.github.io/post/first/</loc>
     <lastmod>2019-07-12T20:47:28+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://ojaswinm.github.io/about/</loc>
+    <lastmod>2019-07-12T16:44:56+05:30</lastmod>
   </url>
   
   <url>

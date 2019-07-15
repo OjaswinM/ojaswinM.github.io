@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.55.6" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/index.xml" type="application/rss+xml" title="Ojaswin">
+<title>#4: Game Playing with Genetic Algorithm - Ojaswin</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    
+    <a class="path" href="http://ojaswinm.github.io">Home</a>
+    <a class="path" href="http://ojaswinm.github.io/about">About</a>
+    <span class="caret"></span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2019-07-13">July 13, 2019</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">#4: Game Playing with Genetic Algorithm</h1>
+  <section class="body" itemprop="articleBody">
+    
+
+<p>This was a project me and my project partner developed for our 3rd year Computer Graphics course. This project
+is based on OpenGL and is completely written in C++. I decided using C++ over
+Javascript, the language I had most experience in at that time, for multiple reasons.
+Firstly, OpenGL is itself written in C and thus has a stable, well written implementation
+for C++ and secondly, after working on a high level language like Javascript, I wanted to try
+out something different to gain a new perpective and C++ seemed like a good option.</p>
+
+<p>In my 2nd year, I had worked on a basic demonstration of <a href="https://en.wikipedia.org/wiki/Genetic_algorithm">Genetic Algortihm</a>
+and thought it would be a good idea to extend the project. Me and my project partner decided
+to create a <a href="https://flappybird.io/">Flappy Bird</a> like game with a focus on <strong>using
+genetic algorithm to train the computer</strong> to play the game.</p>
+
+<p>The link to the source code can be found at the bottom of the post.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>The development of this project was divided into 2 major phases:-</p>
+
+<ol>
+<li><p><strong>Creating the Game Using OpenGL</strong></p>
+
+<p>The game consists of a simple rectangular bird-like object which only has the
+ability to jump. The aim is to time the jumps so as to cross the randomly generated
+obstacles without colliding. The user is scored based on the number of obstacles crossed,
+much like the original Flappy Bird game. The first phase involved implementing the logic and
+developing methods to render the game.</p></li>
+
+<li><p><strong>Implementing the ANN and Genetic Algorithm</strong></p>
+
+<p>The second phase involved laying out the code to enable the computer to
+understand and learn to play the game. This was done by attaching the bird with an
+<a href="https://en.wikipedia.org/wiki/Artificial_neural_network"><em>Artificial Neural Network(ANN)</em></a>
+that determined when to jump. Now, the challenge here was to train the ANN to achieve desired results.
+This training was done through <a href="https://en.wikipedia.org/wiki/Genetic_algorithm">genetic algorithm(GA)</a>
+which was used to tweak the hyper paramaters of the network in order to maximise the final score.</p></li>
+</ol>
+
+<h2 id="the-game">The Game</h2>
+
+<p>Although this article will be more focused towards the genetic algorithm part of the project,
+I&rsquo;ll be quickly going through the interesting parts of designing and implementing the game. For more information
+you can go through the source code linked below.</p>
+
+<p>The game has 2 major entities whcih are implemented as C++ classes:-</p>
+
+<ul>
+<li><p><strong>The Obstacles</strong></p>
+
+<p>The Obstacles are defined in the <code>Obstacle</code> object that can be found in <code>/includes/obstacles.h</code> with the corresponding definitions
+in <code>/osbtacles.cpp</code>. The Obstacles have a <code>position</code> attribute corresponding to their position as well as an <code>opening</code> indicating
+the height at which the opening in the obtacle is present.</p></li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span><span class="err"> </span><span class="nc">Obstacle</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="p">...</span>
+  <span class="kt">int</span> <span class="n">position</span><span class="p">,</span> <span class="n">opening</span><span class="p">;</span>
+  <span class="n">Obstacle</span> <span class="o">*</span><span class="n">next_obs</span><span class="p">;</span>
+  <span class="n">Obstacle</span> <span class="o">*</span><span class="n">prev_obs</span><span class="p">;</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>As we notice, the class has self referencing pointers to next and the previous obstacles in the list.</p>
+
+<p>Another class <code>ObstacleList</code> defined in the same files holds all the obstacles as a doubly linked list
+with pointers to the first and last <code>Obstacle</code> object of the list named <code>obs_list_head</code> and <code>obs_list_rear</code>. It
+also implements the <code>add_rear()</code> method to insert new obstacles to the rear of the list.</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span><span class="err"> </span><span class="nc">ObstacleList</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="n">Obstacle</span><span class="o">*</span> <span class="n">obs_list_head</span><span class="p">;</span>
+  <span class="n">Obstacle</span><span class="o">*</span> <span class="n">obs_list_rear</span><span class="p">;</span>
+
+  <span class="n">ObstacleList</span><span class="p">();</span>
+  <span class="kt">void</span> <span class="nf">add_rear</span><span class="p">(</span><span class="n">Obstacle</span> <span class="o">*</span><span class="n">obs</span><span class="p">);</span>   <span class="c1">//adds obs to the rear of the linked list
+</span><span class="c1"></span>  <span class="kt">void</span> <span class="nf">generate_obstacles</span><span class="p">();</span>    <span class="c1">// generate obstacles with random openings
+</span><span class="c1"></span>  <span class="kt">void</span> <span class="nf">update_pos</span><span class="p">();</span>    <span class="c1">//update position of obstacles after each display cycle
+</span><span class="c1"></span>  <span class="p">...</span>
+<span class="p">};</span>
+</code></pre></div>
+<ul>
+<li><p><strong>The Bird</strong></p>
+
+<p>The Bird is defined in the <code>Bird</code> object that can be found in <code>/includes/bird.h</code> with the corresponding definitions
+in <code>/bird.cpp</code></p>
+
+<p>The following snippet shows the important data memebers and variables of the <code>Bird</code> class.</p></li>
+</ul>
+
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span><span class="err"> </span><span class="nc">Bird</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="p">...</span>
+  <span class="n">Obstacle</span><span class="o">*</span> <span class="n">next_obs</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+  <span class="p">...</span>
+  <span class="cm">/* update bird&#39;s position for the next frame based on gravity and
+</span><span class="cm">   * user input */</span>
+  <span class="kt">void</span> <span class="n">update_pos</span><span class="p">(</span><span class="n">Obstacle</span><span class="o">*</span> <span class="n">o</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="kt">void</span> <span class="nf">jump</span><span class="p">();</span>
+  <span class="cm">/* Check if the upcoming obstacle has been crossed */</span>
+  <span class="kt">bool</span> <span class="nf">has_crossed</span><span class="p">(</span><span class="n">Obstacle</span><span class="o">*</span> <span class="n">o</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="kt">bool</span> <span class="nf">has_collided</span><span class="p">(</span><span class="n">Obstacle</span><span class="o">*</span> <span class="n">o</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">);</span>
+  <span class="p">...</span>
+</code></pre></div>
+
+<p>The bird has a <code>next_obs</code> variable the points to the upcoming object in the <code>ObstacleList</code>. Further,
+it has <code>has_crossed()</code> and <code>has_collided()</code> members to determine wether bird has crossed or collided with <code>next_obs</code></p>
+
+<h2 id="the-neural-network">The Neural Network</h2>
+
+<p>Now that the game was ready, the next phase involved adding some kind of intelligence
+to the bird so it could start jumping through the obstacles on its own. This was done through
+the use of an ANN. To implement the ANN we used a C++ library called <a href="http://leenissen.dk/fann/wp/">Fast Artificial Neural Networks</a>. FANN allows us to initialize a neural network by passing the number of input, output and hidden layers. Initially the
+neural network has randomized weights and returns a random output between 0.0 and 1.0 everytime the network is run.</p>
+
+<p>With the neural network set up, we attached the ANN to a new class named <code>NeuralBird</code> inherited from <code>Bird</code>. The ANN was now acting as the brain of the bird telling it when to jump based on the distance from the obstacle. This was done using the <code>should_jump()</code> method which ran the neural network for the given input and based on the output, decided whether the bird should jump or not. The following code snippet shows the partial implementation of <code>should_jump()</code> method which takes the x and y distance from the <code>Bird.next_obs</code> data memeber as input.</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="kt">bool</span> <span class="n">NeuralBird</span><span class="o">::</span><span class="n">should_jump</span><span class="p">(</span><span class="n">fann_type</span><span class="o">*</span> <span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="p">...</span>
+  <span class="p">...</span>
+  <span class="cm">/* fann_runn runs the given ANN to produce an output which is
+</span><span class="cm">   * then stored in jump_decision data member
+</span><span class="cm">   */</span>
+  <span class="k">this</span><span class="o">-&gt;</span><span class="n">jump_decision</span> <span class="o">=</span> <span class="n">fann_run</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ann</span><span class="p">,</span> <span class="n">input</span><span class="p">);</span>
+
+  <span class="c1">// if the output is greater than 0.5 jump, else do nothing
+</span><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">jump_decision</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="o">&amp;&amp;</span> <span class="n">last_time</span> <span class="o">&gt;=</span> <span class="n">time_bw_jumps</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">last_time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">last_time</span><span class="o">++</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>At this point, we had a <code>NeuralBird</code> class which could play the game on its own but its
+ANN still had random weights. The output of the ANN was unreliable which caused the
+bird to flap around randomly not making any progress whatsoever. We needed a way to train and modify
+the hyperparameters in order maximise the score.</p>
+
+<h2 id="genetic-algorithm-and-the-training-phase">Genetic Algorithm and the Training Phase</h2>
+
+<p>Now conventionally, one of the most popular ways to train an ANN is <a href="https://en.wikipedia.org/wiki/Backpropagation">backpropogation</a>
+but I wanted to experiment with training the network using solely genetic algorithm. I won&rsquo;t be going into
+the detailed workings of GAs as there are many other good resources out there, rather
+I&rsquo;ll be focusing on the parts that are relevant for the project.</p>
+
+<p>So, the implementation of the GA is in the <code>/includes/genetic.h</code> and <code>genetic.cpp</code> files
+in the source code. The following code snippet shows the important data memebers and methods
+of the <code>GA</code> class which implements the algorithm and the rest of the training is done in <code>train.cpp</code>
+located in the root directory.</p>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="k">class</span><span class="err"> </span><span class="nc">GA</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="p">...</span>
+  <span class="c1">// A population of NeuralBird objects used for training
+</span><span class="c1"></span>  <span class="n">NeuralBird</span> <span class="o">**</span><span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">last_population</span><span class="p">;</span>
+  <span class="n">ObstacleList</span> <span class="n">ol</span><span class="p">;</span>
+  <span class="p">...</span>
+  <span class="kt">void</span> <span class="n">init_rand_pop</span><span class="p">();</span>
+  <span class="c1">// Simulate the game for the bird nb over the obstacle course ol and register the score
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="nf">simulate_game</span><span class="p">(</span><span class="n">NeuralBird</span> <span class="o">*</span><span class="n">nb</span><span class="p">,</span> <span class="n">ObstacleList</span> <span class="n">ol</span><span class="p">);</span>
+  <span class="c1">// Simpulate the game for the current generation
+</span><span class="c1"></span>  <span class="kt">void</span> <span class="nf">simulate_game_gen</span><span class="p">();</span>
+  <span class="c1">// Crossover 2 parents to create an offspring with qualities of both parents&#39; ANNs
+</span><span class="c1"></span>  <span class="kt">void</span> <span class="nf">crossover</span><span class="p">(</span><span class="n">NeuralBird</span> <span class="o">*</span><span class="n">nb1</span><span class="p">,</span> <span class="n">NeuralBird</span> <span class="o">*</span><span class="n">nb2</span><span class="p">,</span> <span class="n">NeuralBird</span> <span class="o">**</span><span class="n">child</span><span class="p">);</span>
+  <span class="c1">// Use crossover() to create a new generation from the previous one
+</span><span class="c1"></span>  <span class="kt">void</span> <span class="nf">evolve</span><span class="p">();</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>The implementation can rougly be grouped in the following steps which are repeated
+after every iteration.</p>
+
+<ul>
+<li><p><strong>Generating Random Population of <code>NeuralBird</code> Objects</strong></p>
+
+<p>First, around 10 <code>NeuralBird</code> objects were generated with random ANNs.
+These would act as our starting generation. Each <code>NeuralBird</code> had its
+own ANN and same instance of <code>ObstacleList</code> was passed to each of the birds
+to keep the training fair.</p></li>
+
+<li><p><strong>Assigning a Fitness to Each Member of the Population</strong></p>
+
+<p>We ran a simulation of the game for each of the <code>NeuralBird</code> and assigned a <em>fitness</em> to it.
+In genetic algorithm, fitness of an <em>organism</em> is the measure of how close it is to the desired solution.
+In our case the fitness was simply the final score of the bird after the simulation was run. The function <code>simulate_game()</code>
+is responsible for running the simulation for one bird which is then repeatedly called by
+<code>simulate_game_gen()</code> to do it for the whole generation. Their partial implementations are
+as follows.</p></li>
+</ul>
+<div class="highlight"><pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="kt">int</span> <span class="n">GA</span><span class="o">::</span><span class="n">simulate_game</span><span class="p">(</span><span class="n">NeuralBird</span> <span class="o">*</span><span class="n">nb</span><span class="p">,</span> <span class="n">ObstacleList</span> <span class="n">ol</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="p">...</span>
+  <span class="p">...</span>
+  <span class="c1">// play till score exceeds 100 or the collision occurs
+</span><span class="c1"></span>  <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">nb</span><span class="o">-&gt;</span><span class="n">game_over</span> <span class="o">&amp;&amp;</span> <span class="n">nb</span><span class="o">-&gt;</span><span class="n">score</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ol</span><span class="p">.</span><span class="n">update_pos</span><span class="p">();</span>
+    <span class="n">nb</span><span class="o">-&gt;</span><span class="n">Bird</span><span class="o">::</span><span class="n">update_pos</span><span class="p">();</span>
+
+    <span class="c1">// Run the ANN after each loop to determine whether the bird should jump
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">nb</span><span class="o">-&gt;</span><span class="n">should_jump</span><span class="p">())</span> <span class="p">{</span>
+      <span class="n">nb</span><span class="o">-&gt;</span><span class="n">Bird</span><span class="o">::</span><span class="n">jump</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><p><strong>Performing Selection Operation</strong></p>
+
+<p>Selection and crossover lie at the core of every genetic algorithm implementation.
+<strong>Selection</strong> involves selecting 2 parents from the current population to produce an offspring.
+The parents are selected in such a way that organisms with better fitness are more likely to be
+selected for <em>crossover(explained in next section)</em>. That being said, we should also give other low
+performing organisms a chance to be selected to ensure randomness to some extent.</p>
+
+<p>Our implementation involved selecting a certain number of winners from the population based on
+their fitnesses. Next, we selected some parents from the winners exclusively, and rest from all the organims
+randomly. This ensured that better genes were being propogated to next generation and at the same
+time maintained a factor of randomness by giving a chance to less fit organisms.</p></li>
+
+<li><p><strong>Performing Crossover Operation</strong></p>
+
+<p>The next step involved taking the selected parents and combining their characteristics
+into a new organism that would become a part of our next generation. This operations is
+known as crossover and is vital to the success of any GA. Selection and crossover
+must be performed multiple times until we get a whole new population.</p>
+
+<p>In our case, we perforemed a <em>single point crossover</em> over the biases of the
+ANNs of the parent keeping rest of the connections same. This resulted in a new ANN
+which was then attached to a child <code>NeuralBird</code> object and added to the new population.</p>
+
+<p>Both, the selection and crossover are done in the <code>evolve()</code> function of the
+<code>GA</code> class defined in <code>genetic.cpp</code>.</p></li>
+
+<li><p><strong>Repeat the Previous Steps</strong></p>
+
+<p>Now that we had a new population, we again simulate the game and assign fitnesses and
+repeat the selection and crossover process. The stop condition is implementation dependent
+and could be after certain iterations or after a certain fitness is achieved. We stoped the
+evolution process as soon as any bird attained a score of 100. At which point we used a FANN
+to save the ANN of the winning bird to a file. This saved ANN could later be imported to
+be used to play the game.</p></li>
+</ul>
+
+<h2 id="future-improvements">Future Improvements</h2>
+
+<p>Although we got our project working successfully, we are well aware that our implementation
+is pretty naive. There are still a lot of factors that need to be considered while tuning the hyper
+paramaters. I stumbled upon the following <a href="https://www.ijcai.org/Proceedings/89-1/Papers/122.pdf">paper</a> which gives some great insight about better ways to crossover 2 neural networks. Further, genetic algorithms in itself are usually not enough to
+successfully train a network for practical use and are usually combined with other traditional training algorithms.</p>
+
+<p>I also came across a method of reinforced learning called <a href="https://en.wikipedia.org/wiki/Q-learning">Q-Learning</a> which provides a way
+of training the ANN using back propogation even in absence of test data. This is done thorugh special
+equations used to calculate rewards and penalties that are ultimately used to tweak the weights of the
+network. I have started working on a Q-Learning implementation of the same Flappy Birds game and plan
+to compare its results and efficiency with the GA approach.</p>
+
+<h2 id="snapshots">Snapshots</h2>
+
+<p>I&rsquo;ll be attaching a gif of the AI in action below along with the source code of the whole project. Feel free
+to go through the code and get back to me with any questions, doubts or suggetions!</p>
+
+<p><center><img src="https://media.giphy.com/media/lSbHz8MXum9PpcgYVN/giphy.gif" alt="Flapy Bird AI" /></center></p>
+
+<p>Source Code: <a href="https://github.com/OjaswinM/flappy-bird-ai/tree/master">https://github.com/OjaswinM/flappy-bird-ai/tree/master</a></p>
+
+<h2 id="references">References</h2>
+
+<ul>
+<li><p><a href="https://github.com/ssusnic/Machine-Learning-Flappy-Bird">Machine Learning for Flappy Bird using Neural Network and Genetic Algorithm.</a>
+A great resource that does something similar using Javascript and HTML. Helped me design my crossover and selection functions</p></li>
+
+<li><p><a href="https://www.ijcai.org/Proceedings/89-1/Papers/122.pdf">Training  Feedforward  Neural  Networks  Using  Genetic  Algorithms - David  J.  Montana   and  Lawrence  Davis</a>
+Provides great insight about better implementations of crossover operations</p></li>
+</ul>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2019 Ojaswin - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+
