@@ -2,59 +2,59 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ojaswin</title>
-    <link>/</link>
+    <link>http://ojaswinm.github.io/</link>
     <description>Recent content on Ojaswin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 13 Jul 2019 12:56:40 +0530</lastBuildDate>
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://ojaswinm.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>#4: Game Playing with Genetic Algorithm</title>
-      <link>/post/fourth/</link>
+      <link>http://ojaswinm.github.io/post/fourth/</link>
       <pubDate>Sat, 13 Jul 2019 12:56:40 +0530</pubDate>
       
-      <guid>/post/fourth/</guid>
+      <guid>http://ojaswinm.github.io/post/fourth/</guid>
       <description>This was a project me and my project partner developed for our 3rd year Computer Graphics course. This project is based on OpenGL and is completely written in C++. I decided using C++ over Javascript, the language I had most experience in at that time, for multiple reasons. Firstly, OpenGL is itself written in C and thus has a stable, well written implementation for C++ and secondly, after working on a high level language like Javascript, I wanted to try out something different to gain a new perpective and C++ seemed like a good option.</description>
     </item>
     
     <item>
       <title>#3: Implementing a whole microservice from ground up</title>
-      <link>/post/third/</link>
+      <link>http://ojaswinm.github.io/post/third/</link>
       <pubDate>Fri, 12 Jul 2019 22:51:01 +0530</pubDate>
       
-      <guid>/post/third/</guid>
+      <guid>http://ojaswinm.github.io/post/third/</guid>
       <description>This was my final project for Taskcluster before I got busy with school work. Coincidentally, it was also my biggest contribution yet involving more than 1500 modified lines, 4 PRs and 100s of comments worth discussion and constructive criticism. This whole project took me well around a month to implement and the folks over at Taskcluster were nice enough to guide me throughout.
 As mentioned in my previous posts, Taskcluster is used for continuous integration and task execution.</description>
     </item>
     
     <item>
       <title>#2: First Big Contribution: The Taskcluster Queue</title>
-      <link>/post/second/</link>
+      <link>http://ojaswinm.github.io/post/second/</link>
       <pubDate>Fri, 12 Jul 2019 21:17:47 +0530</pubDate>
       
-      <guid>/post/second/</guid>
+      <guid>http://ojaswinm.github.io/post/second/</guid>
       <description>After I had a few of my PRs merged and was feeling confident about the codebase, I moved on to a bigger project.
 The Taskcluster platform is built on the microservices model. The backbone of the whole platform is the taskcluster-queue which is implemented using RabbitMQ that uses Advanced Message Queueing Protocol(AMQP) at its core. Whenever a task needs to be performed its specification is published onto the queue where workers pick up the relevant tasks.</description>
     </item>
     
     <item>
       <title>#1: Starting Out with Open Source</title>
-      <link>/post/first/</link>
+      <link>http://ojaswinm.github.io/post/first/</link>
       <pubDate>Fri, 12 Jul 2019 20:47:28 +0530</pubDate>
       
-      <guid>/post/first/</guid>
+      <guid>http://ojaswinm.github.io/post/first/</guid>
       <description>I had newly learned javascript including NodeJs and Angular and decided to start contributing to open source, mostly because I was curious to see how actual large scale projects were implemented. After lots of searching around I found Taskcluster, which is a continuous intergration and deployment framework developed and maintained by Mozilla. They maintained a list of good first bugs that beginners like me could work on and were very welcoming.</description>
     </item>
     
     <item>
       <title>About Me</title>
-      <link>/about/</link>
+      <link>http://ojaswinm.github.io/about/</link>
       <pubDate>Fri, 12 Jul 2019 16:44:56 +0530</pubDate>
       
-      <guid>/about/</guid>
+      <guid>http://ojaswinm.github.io/about/</guid>
       <description>Hello there, I am Ojaswin Mujoo currently pursuing my Bachelors in Computer Science. This blog serves to document all the noteworthy projects I have worked on including my open source contributions. Furthermore, I&amp;rsquo;ll be using it as a platform to write about all the new technologies I experiment with and the general direction I see myself going in career wise.
 Contact Me You can contact me through the following channels:-</description>
     </item>
