@@ -397,7 +397,7 @@ footer a {
   .article-list article {
     padding-left: 10vw;
     padding-right: 10vw;
-    padding-bottom: 6vh;
+    padding-bottom: calc(40px + 2vh);
     padding-top: calc(40px + 2vh);
     font-size: 0.9em;
   }
@@ -676,7 +676,7 @@ article.single hr {
   article.single section.body {
     padding-left: 10vw;
     padding-right: 10vw;
-    padding-bottom: 5vh;
+    padding-bottom: calc(45px + 1vh);
     padding-top: calc(45px + 1vh);
     font-size: 0.9em;
   }
